@@ -74,7 +74,7 @@ export default function AudioPlayer() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t p-3 sm:p-4 space-y-3 sm:space-y-4 animate-in fade-in slide-in-from-bottom duration-300">
       <audio 
         ref={audioRef} 
         onTimeUpdate={handleTimeUpdate}
@@ -101,18 +101,20 @@ export default function AudioPlayer() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Button
-            size="icon"
-            variant="outline"
-            onClick={togglePlayPause}
-          >
-            {isPlaying ? <Pause size={20} /> : <Play size={20} />}
-          </Button>
+           size="icon"
+           variant="outline"
+           onClick={togglePlayPause}
+           className="hover:bg-primary/10 transition-colors"
+         >
+           {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+         </Button>
           
           <Button
-            size="icon"
-            variant={isRepeat ? "default" : "outline"}
-            onClick={handleRepeatToggle}
-          >
+           size="icon"
+           variant={isRepeat ? "default" : "outline"}
+           onClick={handleRepeatToggle}
+           className="hover:bg-primary/10 transition-colors"
+         >
             <Repeat size={20} />
           </Button>
         </div>

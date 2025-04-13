@@ -21,13 +21,11 @@ export default function Home() {
         
         <FilterControls />
         
-        <div className="flex-grow my-6">
+        <div className="flex-grow my-6 pb-24">
           <TrackList />
         </div>
         
-        <div className="sticky bottom-0 bg-card p-4 rounded-t-lg shadow-lg border-t">
-          <AudioPlayer />
-        </div>
+        <AudioPlayer />
       </div>
     </AudioStateProvider>
   );
