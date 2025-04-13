@@ -25,3 +25,17 @@ export interface AudioContextProps {
   togglePlayPause: () => void;
   updateFilters: (newFilters: Partial<FilterState>) => void;
 }
+
+export type AudioMetadataResponse = {
+  success: boolean;
+  data?: AudioTrack[];
+  error?: string;
+  timestamp?: string;
+};
+
+export type BookType = 'KB' | 'AB';
+
+export const BOOK_TYPES: Record<BookType, string> = {
+  KB: 'Course Book',
+  AB: 'Workbook'
+};

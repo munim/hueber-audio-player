@@ -1,36 +1,41 @@
 import { AudioTrack } from '@/types';
 
 let audioFilesCache: AudioTrack[] | null = null;
+let fetchPromise: Promise<AudioTrack[]> | null = null;
 
-export async function discoverAudioFiles(): Promise<AudioTrack[]> {
+export async function getAudioFiles(): Promise<AudioTrack[]> {
+  // Return cached data if available
   if (audioFilesCache) return audioFilesCache;
   
+  // Return existing promise if fetch is in progress
+  if (fetchPromise) return fetchPromise;
+
   try {
-    const response = await fetch('/assets/audio-metadata.json');
-    audioFilesCache = await response.json();
+    fetchPromise = fetch('/assets/audio-metadata.json')
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to fetch audio metadata');
+        return response.json();
+      })
+      .then(data => {
+        audioFilesCache = data;
+        return data;
+      })
+      .catch(error => {
+        console.error('Failed to load audio metadata:', error);
+        return [];
+      })
+      .finally(() => {
+        fetchPromise = null;
+      });
+
+    return await fetchPromise;
   } catch (error) {
-    console.error('Failed to load audio metadata:', error);
-    audioFilesCache = [];
+    console.error('Error fetching audio files:', error);
+    return [];
   }
-  
-  return audioFilesCache || [];
 }
 
-export function parseAudioFilename(filename: string): Partial<AudioTrack> {
-  const regex = /^(\d+)_(KB|AB)_L(\d+)_(\d+)\.mp3$/;
-  const match = filename.match(regex);
-  
-  if (!match) return {};
-  
-  const [_, moduleId, bookType, lessonStr, partStr] = match;
-  const lessonNumber = parseInt(lessonStr);
-  const partNumber = parseInt(partStr);
-  
-  return {
-    moduleId,
-    bookType: bookType as 'KB' | 'AB',
-    lessonNumber,
-    partNumber,
-    displayName: `Lesson ${lessonNumber} - Part ${partNumber}${bookType === 'AB' ? ' (Workbook)' : ''}`
-  };
+// Utility function to get audio file URL
+export function getAudioFileUrl(path: string): string {
+  return path.startsWith('/') ? path : `/${path}`;
 }

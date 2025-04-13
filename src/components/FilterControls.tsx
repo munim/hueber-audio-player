@@ -23,11 +23,11 @@ export default function FilterControls() {
     )
   ).map((moduleBand: string) => {
     const [moduleId, band] = moduleBand.split('-');
-    const module = (audioMetadata as AudioTrack[]).find(item => item.moduleId === moduleId);
+    const moduleData = (audioMetadata as AudioTrack[]).find(item => item.moduleId === moduleId);
     return {
       moduleId,
       band,
-      moduleNumber: module?.moduleNumber || ''
+      moduleNumber: moduleData?.moduleNumber || ''
     };
   });
   

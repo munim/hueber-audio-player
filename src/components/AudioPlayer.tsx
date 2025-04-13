@@ -20,7 +20,7 @@ export default function AudioPlayer() {
       audioRef.current.load();
       if (isPlaying) audioRef.current.play();
     }
-  }, [currentTrack]);
+  }, [currentTrack, isPlaying]);
 
   useEffect(() => {
     if (audioRef.current) {

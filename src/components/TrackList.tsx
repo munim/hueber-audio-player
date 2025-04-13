@@ -3,7 +3,7 @@
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { AudioContext } from './AudioStateProvider';
 import { AudioTrack } from '../types';
-import { discoverAudioFiles } from '../lib/audio-data';
+import { getAudioFiles } from '../lib/audio-data';
 import { Card, CardContent } from './ui/card';
 
 export default function TrackList() {
@@ -15,7 +15,7 @@ export default function TrackList() {
   useEffect(() => {
     const loadTracks = async () => {
       try {
-        const tracks = await discoverAudioFiles();
+        const tracks = await getAudioFiles();
         setAllTracks(tracks);
       } catch (err) {
         setError('Failed to load audio tracks');
