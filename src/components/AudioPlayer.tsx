@@ -4,7 +4,7 @@ import { useContext, useRef, useEffect, useState } from 'react';
 import { AudioContext } from './AudioStateProvider';
 import { Button } from './ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Play, Pause, Repeat, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, Repeat, Volume2, VolumeX, ChevronUp, ChevronDown } from 'lucide-react';
 
 export default function AudioPlayer() {
   const { currentTrack, isPlaying, togglePlayPause } = useContext(AudioContext);
@@ -13,6 +13,7 @@ export default function AudioPlayer() {
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.8);
   const [isRepeat, setIsRepeat] = useState(false);
+  const [isCompact, setIsCompact] = useState(false);
   
   useEffect(() => {
     if (currentTrack && audioRef.current) {
@@ -100,6 +101,14 @@ export default function AudioPlayer() {
       
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => setIsCompact(!isCompact)}
+            className="sm:hidden hover:bg-primary/10 transition-colors"
+          >
+            {isCompact ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+          </Button>
           <Button
            size="icon"
            variant="outline"
