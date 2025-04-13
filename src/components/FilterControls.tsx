@@ -51,13 +51,19 @@ export default function FilterControls() {
       </Select>
       
       <div className="flex gap-2">
-        <Button 
+        <Button
+          variant={filters.bookType === 'all' ? 'default' : 'outline'}
+          onClick={() => updateFilters({ bookType: 'all' })}
+        >
+          All
+        </Button>
+        <Button
           variant={filters.bookType === 'KB' ? 'default' : 'outline'}
           onClick={() => updateFilters({ bookType: 'KB' })}
         >
           Course Book
         </Button>
-        <Button 
+        <Button
           variant={filters.bookType === 'AB' ? 'default' : 'outline'}
           onClick={() => updateFilters({ bookType: 'AB' })}
         >

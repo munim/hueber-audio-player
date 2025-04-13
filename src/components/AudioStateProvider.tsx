@@ -6,7 +6,7 @@ import { AudioTrack } from '@/types';
 
 interface FilterState {
   moduleId: string;
-  bookType: 'KB' | 'AB';
+  bookType: 'KB' | 'AB' | 'all';
   lessonNumber: number | null;
   partNumber: number | null;
 }

@@ -10,7 +10,7 @@ export default function AudioPlayer() {
   const { currentTrack, isPlaying, togglePlayPause } = useContext(AudioContext);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(0);
+  const [duration, setDuration] = useState<number | null>(null);
   const [volume, setVolume] = useState(0.8);
   const [isRepeat, setIsRepeat] = useState(false);
   const [isCompact, setIsCompact] = useState(false);
@@ -60,7 +60,8 @@ export default function AudioPlayer() {
     }
   };
 
-  const formatTime = (seconds: number) => {
+  const formatTime = (seconds: number | null) => {
+    if (seconds === null || isNaN(seconds)) return '--:--';
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;

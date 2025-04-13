@@ -12,7 +12,7 @@ export interface AudioTrack {
 
 export interface FilterState {
   moduleId: string;
-  bookType: 'KB' | 'AB';
+  bookType: 'KB' | 'AB' | 'all';
   lessonNumber: number | null;
   partNumber: number | null;
 }
@@ -33,9 +33,10 @@ export type AudioMetadataResponse = {
   timestamp?: string;
 };
 
-export type BookType = 'KB' | 'AB';
+export type BookType = 'KB' | 'AB' | 'all';
 
 export const BOOK_TYPES: Record<BookType, string> = {
   KB: 'Course Book',
-  AB: 'Workbook'
+  AB: 'Workbook',
+  all: 'All'
 };

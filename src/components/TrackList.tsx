@@ -37,7 +37,7 @@ export default function TrackList() {
     // First filter the tracks based on current filters
     const filtered = allTracks.filter(track => {
       if (filters.moduleId && track.moduleId !== filters.moduleId) return false;
-      if (filters.bookType && track.bookType !== filters.bookType) return false;
+      if (filters.bookType && filters.bookType !== 'all' && track.bookType !== filters.bookType) return false;
       if (filters.lessonNumber && track.lessonNumber !== filters.lessonNumber) return false;
       if (filters.partNumber && track.partNumber !== filters.partNumber) return false;
       return true;
@@ -85,7 +85,7 @@ export default function TrackList() {
                 value={lessonNumber}
                 className="border-b-0"
               >
-                <AccordionTrigger className="hover:no-underline px-4 py-2 bg-muted/50 rounded-md hover:bg-muted/80 transition-colors">
+                <AccordionTrigger className="hover:no-underline px-4 py-3 bg-muted/50 rounded-md hover:bg-muted/80 transition-colors data-[state=open]:bg-muted/80">
                   <div className="flex items-center justify-between w-full">
                     <span className="font-medium">
                       Lesson {lessonNumber} ({tracks.length} part{tracks.length > 1 ? 's' : ''})
