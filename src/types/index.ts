@@ -1,6 +1,8 @@
 export interface AudioTrack {
   id: string;
   moduleId: string;
+  moduleNumber: string;
+  band: string;
   bookType: 'KB' | 'AB';
   lessonNumber: number;
   partNumber: number;

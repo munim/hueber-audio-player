@@ -31,8 +31,14 @@ function scanAudioFiles(): AudioTrack[] {
 
   const moduleDirs = fs.readdirSync(audioDir);
   
-  for (const moduleId of moduleDirs) {
-    const moduleDir = path.join(audioDir, moduleId);
+  for (const dirName of moduleDirs) {
+    // Extract moduleId, moduleNumber and band from directory name (format: 6001083_4_A2.2)
+    const dirParts = dirName.split('_');
+    const moduleId = dirParts[0];
+    const moduleNumber = dirParts.length > 1 ? dirParts[1] : '';
+    const band = dirParts.length > 2 ? dirParts[2] : '';
+    
+    const moduleDir = path.join(audioDir, dirName);
     const files = fs.readdirSync(moduleDir);
     
     for (const file of files) {
@@ -41,10 +47,12 @@ function scanAudioFiles(): AudioTrack[] {
         tracks.push({
           id: `${moduleId}-${parsed.bookType}-${parsed.lessonNumber}-${parsed.partNumber}`,
           moduleId,
+          moduleNumber,
+          band,
           bookType: parsed.bookType!,
           lessonNumber: parsed.lessonNumber!,
           partNumber: parsed.partNumber!,
-          filePath: `/assets/audio/${moduleId}/${file}`,
+          filePath: `/assets/audio/${dirName}/${file}`,
           displayName: parsed.displayName!
         });
       }

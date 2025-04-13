@@ -2,19 +2,34 @@
 
 import { useContext } from 'react';
 import { AudioContext } from './AudioStateProvider';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import audioMetadata from '../../public/assets/audio-metadata.json';
+import type { AudioTrack } from '@/types';
 
 export default function FilterControls() {
   const { filters, updateFilters } = useContext(AudioContext);
   
-  const availableModules = ['6001083', '6001084'];
+  // Get unique moduleId-band combinations
+  const moduleOptions = Array.from(
+    new Set(
+      (audioMetadata as AudioTrack[]).map(item => `${item.moduleId}-${item.band}`)
+    )
+  ).map((moduleBand: string) => {
+    const [moduleId, band] = moduleBand.split('-');
+    const module = (audioMetadata as AudioTrack[]).find(item => item.moduleId === moduleId);
+    return {
+      moduleId,
+      band,
+      moduleNumber: module?.moduleNumber || ''
+    };
+  });
   
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -27,9 +42,9 @@ export default function FilterControls() {
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Modules</SelectItem>
-          {availableModules.map((module) => (
-            <SelectItem key={module} value={module}>
-              Module {module}
+          {moduleOptions.map(({moduleId, moduleNumber, band}) => (
+            <SelectItem key={`${moduleId}-${band}`} value={moduleId}>
+              Module {moduleNumber} - {band}
             </SelectItem>
           ))}
         </SelectContent>
