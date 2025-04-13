@@ -5,7 +5,20 @@ import { Moon, Sun } from 'lucide-react'
 import { useTheme } from './theme-provider'
 
 export function ThemeToggle() {
+  const [mounted, setMounted] = React.useState(false)
   const { theme, setTheme } = useTheme()
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <button className="inline-flex items-center justify-center rounded-md p-2 hover:bg-accent hover:text-accent-foreground">
+        <span className="sr-only">Toggle theme</span>
+      </button>
+    )
+  }
 
   return (
     <button
