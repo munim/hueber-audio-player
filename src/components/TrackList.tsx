@@ -67,7 +67,7 @@ export default function TrackList() {
               <div>
                 <h3 className="font-medium">{track.displayName}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Module {track.moduleId} - {track.bookType === 'KB' ? 'Course Book' : 'Workbook'}
+                  Module {track.moduleNumber} - {track.band} - {track.bookType === 'KB' ? 'Course Book' : 'Workbook'}
                 </p>
               </div>
               {currentTrack?.id === track.id && (
