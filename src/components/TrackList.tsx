@@ -1,0 +1,57 @@
+'use client';
+
+import { useContext, useMemo } from 'react';
+import { AudioContext } from './AudioStateProvider';
+import { discoverAudioFiles } from '../lib/audio-data';
+import { Card, CardContent } from './ui/card';
+
+export default function TrackList() {
+  const { filters, currentTrack, setCurrentTrack, isPlaying } = useContext(AudioContext);
+  
+  const allTracks = useMemo(() => discoverAudioFiles(), []);
+  
+  const filteredTracks = useMemo(() => {
+    return allTracks.filter(track => {
+      if (filters.moduleId && track.moduleId !== filters.moduleId) return false;
+      if (filters.bookType && track.bookType !== filters.bookType) return false;
+      if (filters.lessonNumber && track.lessonNumber !== filters.lessonNumber) return false;
+      if (filters.partNumber && track.partNumber !== filters.partNumber) return false;
+      return true;
+    }).sort((a, b) => {
+      if (a.lessonNumber !== b.lessonNumber) {
+        return a.lessonNumber - b.lessonNumber;
+      }
+      return a.partNumber - b.partNumber;
+    });
+  }, [allTracks, filters]);
+
+  return (
+    <div className="space-y-2">
+      {filteredTracks.length === 0 ? (
+        <p className="text-center py-8 text-muted-foreground">No audio files match your filters</p>
+      ) : (
+        filteredTracks.map(track => (
+          <Card 
+            key={track.id} 
+            className={`cursor-pointer hover:bg-accent transition-colors ${
+              currentTrack?.id === track.id ? 'border-primary' : ''
+            }`}
+            onClick={() => setCurrentTrack(track)}
+          >
+            <CardContent className="p-4 flex items-center justify-between">
+              <div>
+                <h3 className="font-medium">{track.displayName}</h3>
+                <p className="text-sm text-muted-foreground">
+                  Module {track.moduleId} - {track.bookType === 'KB' ? 'Course Book' : 'Workbook'}
+                </p>
+              </div>
+              {currentTrack?.id === track.id && (
+                <div className="w-4 h-4 rounded-full bg-primary animate-pulse" />
+              )}
+            </CardContent>
+          </Card>
+        ))
+      )}
+    </div>
+  );
+}
