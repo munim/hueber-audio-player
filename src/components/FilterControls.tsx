@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { AudioContext } from './AudioStateProvider';
 import {
   Select,
@@ -10,26 +10,36 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import audioMetadata from '../../public/assets/audio-metadata.json';
 import type { AudioTrack } from '@/types';
 
 export default function FilterControls() {
   const { filters, updateFilters } = useContext(AudioContext);
-  
-  // Get unique moduleId-band combinations
-  const moduleOptions = Array.from(
-    new Set(
-      (audioMetadata as AudioTrack[]).map(item => `${item.moduleId}-${item.band}`)
-    )
-  ).map((moduleBand: string) => {
-    const [moduleId, band] = moduleBand.split('-');
-    const moduleData = (audioMetadata as AudioTrack[]).find(item => item.moduleId === moduleId);
-    return {
-      moduleId,
-      band,
-      moduleNumber: moduleData?.moduleNumber || ''
-    };
-  });
+  const [moduleOptions, setModuleOptions] = useState<Array<{moduleId: string, band: string, moduleNumber: string}>>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Load data client-side only
+    const audioMetadata = require('../../public/assets/audio-metadata.json');
+    const options = Array.from(
+      new Set(
+        (audioMetadata as AudioTrack[]).map(item => `${item.moduleId}-${item.band}`)
+      )
+    ).map((moduleBand: string) => {
+      const [moduleId, band] = moduleBand.split('-');
+      const moduleData = (audioMetadata as AudioTrack[]).find(item => item.moduleId === moduleId);
+      return {
+        moduleId,
+        band,
+        moduleNumber: moduleData?.moduleNumber || ''
+      };
+    });
+    setModuleOptions(options);
+    setIsLoading(false);
+  }, []);
+
+  if (isLoading) {
+    return <div className="flex flex-col gap-4 sm:flex-row sm:items-center h-[56px]"></div>;
+  }
   
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
