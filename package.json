@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "generate-audio-metadata": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' -r tsconfig-paths/register scripts/generate-audio-metadata.ts",
-    "build": "npm run generate-audio-metadata && next build",
+    "prebuild": "node scripts/generate-audio-data.js",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },

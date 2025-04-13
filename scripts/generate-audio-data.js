@@ -1,8 +1,7 @@
-import type { AudioTrack } from '../src/types';
 const path = require('path');
 const fs = require('fs');
 
-function parseAudioFilename(filename: string): Partial<AudioTrack> {
+function parseAudioFilename(filename) {
   const regex = /^(\d+)_(KB|AB)_L(\d+)_(\d+)\.mp3$/;
   const match = filename.match(regex);
   
@@ -14,25 +13,25 @@ function parseAudioFilename(filename: string): Partial<AudioTrack> {
   
   return {
     moduleId,
-    bookType: bookType as 'KB' | 'AB',
+    bookType,
     lessonNumber,
     partNumber,
     displayName: `Lesson ${lessonNumber} - Part ${partNumber}${bookType === 'AB' ? ' (Workbook)' : ''}`
   };
 }
 
-function scanAudioFiles(): AudioTrack[] {
-  const audioDir = path.join(process.cwd(), 'public', 'assets', 'audio');
-  const tracks: AudioTrack[] = [];
+function scanAudioFiles() {
+  const audioDir = path.join(__dirname, '../public/assets/audio');
+  const tracks = [];
   
   if (!fs.existsSync(audioDir)) {
-    return [];
+    fs.mkdirSync(audioDir, { recursive: true });
+    return tracks;
   }
 
   const moduleDirs = fs.readdirSync(audioDir);
   
   for (const dirName of moduleDirs) {
-    // Extract moduleId, moduleNumber and band from directory name (format: 6001083_4_A2.2)
     const dirParts = dirName.split('_');
     const moduleId = dirParts[0];
     const moduleNumber = dirParts.length > 1 ? dirParts[1] : '';
@@ -49,11 +48,11 @@ function scanAudioFiles(): AudioTrack[] {
           moduleId,
           moduleNumber,
           band,
-          bookType: parsed.bookType!,
-          lessonNumber: parsed.lessonNumber!,
-          partNumber: parsed.partNumber!,
+          bookType: parsed.bookType,
+          lessonNumber: parsed.lessonNumber,
+          partNumber: parsed.partNumber,
           filePath: `/assets/audio/${dirName}/${file}`,
-          displayName: parsed.displayName!
+          displayName: parsed.displayName
         });
       }
     }
@@ -64,7 +63,11 @@ function scanAudioFiles(): AudioTrack[] {
 
 // Generate and save audio metadata
 const tracks = scanAudioFiles();
-const outputPath = path.join(process.cwd(), 'public', 'assets', 'audio-metadata.json');
+const outputDir = path.join(__dirname, '../public/assets');
+if (!fs.existsSync(outputDir)) {
+  fs.mkdirSync(outputDir, { recursive: true });
+}
 
+const outputPath = path.join(outputDir, 'audio-metadata.json');
 fs.writeFileSync(outputPath, JSON.stringify(tracks, null, 2));
 console.log(`Generated audio metadata with ${tracks.length} tracks`);
