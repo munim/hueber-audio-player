@@ -1,15 +1,32 @@
 'use client';
 
-import { useContext, useMemo } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { AudioContext } from './AudioStateProvider';
+import { AudioTrack } from '../types';
 import { discoverAudioFiles } from '../lib/audio-data';
 import { Card, CardContent } from './ui/card';
 
 export default function TrackList() {
-  const { filters, currentTrack, setCurrentTrack, isPlaying } = useContext(AudioContext);
-  
-  const allTracks = useMemo(() => discoverAudioFiles(), []);
-  
+  const { filters, currentTrack, setCurrentTrack } = useContext(AudioContext);
+  const [allTracks, setAllTracks] = useState<AudioTrack[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadTracks = async () => {
+      try {
+        const tracks = await discoverAudioFiles();
+        setAllTracks(tracks);
+      } catch (err) {
+        setError('Failed to load audio tracks');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadTracks();
+  }, []);
+
   const filteredTracks = useMemo(() => {
     return allTracks.filter(track => {
       if (filters.moduleId && track.moduleId !== filters.moduleId) return false;
@@ -25,14 +42,22 @@ export default function TrackList() {
     });
   }, [allTracks, filters]);
 
+  if (loading) {
+    return <p className="text-center py-8 text-muted-foreground">Loading audio files...</p>;
+  }
+
+  if (error) {
+    return <p className="text-center py-8 text-destructive">{error}</p>;
+  }
+
   return (
     <div className="space-y-2">
       {filteredTracks.length === 0 ? (
         <p className="text-center py-8 text-muted-foreground">No audio files match your filters</p>
       ) : (
         filteredTracks.map(track => (
-          <Card 
-            key={track.id} 
+          <Card
+            key={track.id}
             className={`cursor-pointer hover:bg-accent transition-colors ${
               currentTrack?.id === track.id ? 'border-primary' : ''
             }`}

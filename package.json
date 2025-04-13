@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "generate-audio-metadata": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' -r tsconfig-paths/register scripts/generate-audio-metadata.ts",
+    "build": "npm run generate-audio-metadata && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -33,6 +34,7 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "eslint": "^9",
-    "eslint-config-next": "15.3.0"
+    "eslint-config-next": "15.3.0",
+    "ts-node": "^10.9.2"
   }
 }
