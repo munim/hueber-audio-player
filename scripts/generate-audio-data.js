@@ -1,8 +1,15 @@
 const path = require('path');
 const fs = require('fs');
 
+// Supported book types and their display names
+const BOOK_TYPES = {
+  KB: 'Course Book',
+  AB: 'Workbook'
+  // Add more book types here as needed
+};
+
 function parseAudioFilename(filename) {
-  const regex = /^(\d+)_(KB|AB)_L(\d+)_(\d+)\.mp3$/;
+  const regex = /^(\d+)_([A-Z]{2})_L(\d+)_(\d+)\.mp3$/;
   const match = filename.match(regex);
   
   if (!match) return {};
@@ -16,7 +23,7 @@ function parseAudioFilename(filename) {
     bookType,
     lessonNumber,
     partNumber,
-    displayName: `Lesson ${lessonNumber} - Part ${partNumber}${bookType === 'AB' ? ' (Workbook)' : ''}`
+    displayName: `Lesson ${lessonNumber} - Part ${partNumber}${BOOK_TYPES[bookType] ? ` (${BOOK_TYPES[bookType]})` : ''}`
   };
 }
 
@@ -38,22 +45,31 @@ function scanAudioFiles() {
     const band = dirParts.length > 2 ? dirParts[2] : '';
     
     const moduleDir = path.join(audioDir, dirName);
-    const files = fs.readdirSync(moduleDir);
     
-    for (const file of files) {
-      const parsed = parseAudioFilename(file);
-      if (parsed.moduleId) {
-        tracks.push({
-          id: `${moduleId}-${parsed.bookType}-${parsed.lessonNumber}-${parsed.partNumber}`,
-          moduleId,
-          moduleNumber,
-          band,
-          bookType: parsed.bookType,
-          lessonNumber: parsed.lessonNumber,
-          partNumber: parsed.partNumber,
-          filePath: `/assets/audio/${dirName}/${file}`,
-          displayName: parsed.displayName
-        });
+    // Look for book type subdirectories
+    const bookTypeDirs = fs.readdirSync(moduleDir).filter(dir =>
+      Object.keys(BOOK_TYPES).includes(dir)
+    );
+    
+    for (const bookType of bookTypeDirs) {
+      const bookTypeDir = path.join(moduleDir, bookType);
+      const files = fs.readdirSync(bookTypeDir);
+      
+      for (const file of files) {
+        const parsed = parseAudioFilename(file);
+        if (parsed.moduleId) {
+          tracks.push({
+            id: `${moduleId}-${bookType}-${parsed.lessonNumber}-${parsed.partNumber}`,
+            moduleId,
+            moduleNumber,
+            band,
+            bookType,
+            lessonNumber: parsed.lessonNumber,
+            partNumber: parsed.partNumber,
+            filePath: `/assets/audio/${dirName}/${bookType}/${file}`,
+            displayName: parsed.displayName
+          });
+        }
       }
     }
   }
