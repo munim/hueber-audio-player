@@ -2,7 +2,8 @@
 
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { AudioContext } from './AudioStateProvider';
-import { AudioTrack } from '../types';
+import type { AudioTrack } from '../types';
+import { BOOK_TYPES } from '../types';
 import { getAudioFiles } from '../lib/audio-data';
 import { Card, CardContent } from './ui/card';
 import {

@@ -10,7 +10,8 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import type { AudioTrack } from '@/types';
+import type { AudioTrack, BookType } from '@/types';
+import { BOOK_TYPES } from '@/types';
 
 export default function FilterControls() {
   const { filters, updateFilters } = useContext(AudioContext);
@@ -67,18 +68,17 @@ export default function FilterControls() {
         >
           All
         </Button>
-        <Button
-          variant={filters.bookType === 'KB' ? 'default' : 'outline'}
-          onClick={() => updateFilters({ bookType: 'KB' })}
-        >
-          Course Book
-        </Button>
-        <Button
-          variant={filters.bookType === 'AB' ? 'default' : 'outline'}
-          onClick={() => updateFilters({ bookType: 'AB' })}
-        >
-          Workbook
-        </Button>
+        {Object.entries(BOOK_TYPES)
+          .filter(([type]) => type !== 'all')
+          .map(([bookType, displayName]) => (
+            <Button
+              key={bookType}
+              variant={filters.bookType === bookType ? 'default' : 'outline'}
+              onClick={() => updateFilters({ bookType: bookType as BookType })}
+            >
+              {displayName}
+            </Button>
+          ))}
       </div>
     </div>
   );
